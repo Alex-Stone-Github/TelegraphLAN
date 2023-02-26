@@ -1,74 +1,40 @@
-const canvas = document.getElementById("Main") as HTMLCanvasElement;
-const ctx = canvas.getContext("webgl2") as WebGL2RenderingContext;
+import { CameraRenderer } from "./camera.js"
+import { InputHandler } from "./input.js"
+import { GameBody } from "./obj.js"
+import { rotate } from "./vecmath.js"
+import { Vec2, v, Color } from "./types.js"
 
-const vshadertext = `
-#version 300 es
+InputHandler.start();
 
-in vec3 vertexPosition;
+var objs= [
+    new GameBody([
+        v(-40, -40),
+        v(40, -40),
+        v(40, 40),
+        v(50, 50),
+        v(-40, 40),
+    ], v(300, 300), 1/3.1415),
+    new GameBody([
+        v(-40, -40),
+        v(40, -40),
+        v(40, 40),
+        v(50, 50),
+        v(-40, 40),
+    ], v(400, 400), 0),
+];
 
-void main() {
-    gl_Position = vec4(vertexPosition, 1.0);
-}
+setInterval(() => {
+    CameraRenderer.background("grey");
+    for (const obj of objs) {
+        obj.show();
+        for (const vertex of obj.get_vertices()) {
+            CameraRenderer.rect(vertex, v(5,5), "red");
+            CameraRenderer.draw_line(InputHandler.mousepos, vertex, "blue");
+        }
+    }
+    CameraRenderer.rect(InputHandler.mousepos, v(5,5), "yellow");
+}, 1000/30);
 
-`;
-const fshadertext = `
-#version 300 es
 
-precision mediump float;
-
-out vec4 fragcolor;
-
-void main() {
-    fragcolor = vec4(1.0, 0.0, 0.0, 1.0);
-}
-
-`;
-const vbo_data = new Float32Array([
-    -.5, -.5, 0,
-    .5, -.5, 0,
-    .5, .5, 0,
-    -.5, .5, 0,
-]);
-
-// shaders
-const vertex_shader = ctx.createShader(ctx.VERTEX_SHADER) as WebGLShader;
-const fragment_shader = ctx.createShader(ctx.FRAGMENT_SHADER) as WebGLShader;
-const program = ctx.createProgram() as WebGLProgram;
-ctx.shaderSource(vertex_shader, vshadertext.trim());
-ctx.shaderSource(fragment_shader, fshadertext.trim());
-ctx.compileShader(vertex_shader);
-if (!ctx.getShaderParameter(vertex_shader, ctx.COMPILE_STATUS)) {
-    console.log("vertex: ");
-    throw ctx.getShaderInfoLog(vertex_shader);
-}
-ctx.compileShader(fragment_shader);
-if (!ctx.getShaderParameter(fragment_shader, ctx.COMPILE_STATUS)) {
-    console.log("fragment: ");
-    throw ctx.getShaderInfoLog(fragment_shader);
-}
-ctx.attachShader(program, vertex_shader);
-ctx.attachShader(program, fragment_shader);
-ctx.linkProgram(program);
-if (!ctx.getProgramParameter(program, ctx.LINK_STATUS)) {
-    console.log("program: ");
-    throw ctx.getProgramInfoLog(program);
-}
-
-// buffers
-const vbo = ctx.createBuffer() as WebGLBuffer;
-ctx.bindBuffer(ctx.ARRAY_BUFFER, vbo);
-ctx.bufferData(ctx.ARRAY_BUFFER, vbo_data, ctx.STATIC_DRAW);
-
-// vbo stuff
-const vertexPosition = ctx.getAttribLocation(program, "vertexPosition");
-ctx.vertexAttribPointer(vertexPosition, 4, ctx.FLOAT, false, 0, 0);
-ctx.enableVertexAttribArray(vertexPosition);
-
-// drawing
-ctx.viewport(0, 0, canvas.width, canvas.height);
-ctx.clearColor(1.0, 0.0, 0.0, 1.0);
-ctx.clear(ctx.COLOR_BUFFER_BIT);
-ctx.useProgram(program);
-ctx.drawArrays(ctx.LINES, 0, 3);
 
 
