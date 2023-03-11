@@ -4,7 +4,7 @@ export class ShaderProgram {
     private program: WebGLProgram;
     private v_shader: WebGLShader;
     private f_shader: WebGLShader;
-    constructor(vtext: string, ftext: string) {
+    public constructor(vtext: string, ftext: string) {
         this.v_shader = gl.createShader(gl.VERTEX_SHADER) as WebGLShader;
         gl.shaderSource(this.v_shader, vtext);
         gl.compileShader(this.v_shader);
@@ -33,10 +33,10 @@ export class ShaderProgram {
                 throw "program: " + errmsg;
         }
     }
-    use() {
+    public use() {
         gl.useProgram(this.program);
     }
-    get_attribute_location(name: string) {
+    public get_attribute_location(name: string) {
         return gl.getAttribLocation(this.program, name);
     }
 }

@@ -1,5 +1,5 @@
 import { ShaderProgram } from "./sprogram.js";
-import { IBOMesh } from "./mesh.js";
+import { Mesh } from "./mesh.js";
 import { gl, canvas } from "./glob.js"
 
 // preconstants
@@ -10,6 +10,7 @@ const vertices = [
     -.5, .5, 0,
 ];
 const indices = [0,1,2, 0,2,3];
+const indices2 = [0,1,2];
 const vshadertext = `
 attribute vec3 position;
 void main() {
@@ -31,18 +32,26 @@ void main() {
 `;
 
 // deal with buffers
-const ibomesh = new IBOMesh(vertices, indices);
+const mesh1 = new Mesh(vertices, indices);
+const mesh2 = new Mesh(vertices, indices2);
 // deal with shaders
-const sprogram = new ShaderProgram(vshadertext, fshadertext_red);
+const sprogramred = new ShaderProgram(vshadertext, fshadertext_red);
+const sprogramblue = new ShaderProgram(vshadertext, fshadertext_blue);
 // mix
-ibomesh.setup(sprogram);
+mesh1.setup(sprogramred);
+mesh2.setup(sprogramblue);
 
 // drawing once twice maybe thrice
-sprogram.use();
-ibomesh.bind();
-gl.clearColor(0.5, 0.5, 0.5, 1.0);
-gl.enable(gl.DEPTH_TEST); // no clue literal magic // TODO: Check for bugs
-gl.clear(gl.COLOR_BUFFER_BIT);
 gl.viewport(0, 0, canvas.width, canvas.height); // TODO: Adjust for the lols
+gl.enable(gl.DEPTH_TEST); // no clue literal magic // TODO: Check for bugs
+gl.clearColor(0.5, 0.5, 0.5, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+// 1
+sprogramred.use();
+mesh1.bind();
 gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+// 2
+//sprogramblue.use();
+//mesh2.bind();
+//gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
