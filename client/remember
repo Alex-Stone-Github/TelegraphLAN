@@ -1,5 +1,0 @@
-start:
-	tsc -w 
-	cd ./public
-	python3 -m http.server
-
