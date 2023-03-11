@@ -1,7 +1,7 @@
 import { gl } from "./glob.js"
 
 export class ShaderProgram {
-    private program: WebGLProgram;
+    public readonly program: WebGLProgram;
     private v_shader: WebGLShader;
     private f_shader: WebGLShader;
     public constructor(vtext: string, ftext: string) {
@@ -37,5 +37,8 @@ export class ShaderProgram {
     }
     public use() {
         gl.useProgram(this.program);
+    }
+    public get_uniform_location(name: string) {
+        return gl.getUniformLocation(this.program, name);
     }
 }
