@@ -26,6 +26,8 @@ export class ShaderProgram {
         this.program = gl.createProgram() as WebGLProgram;
         gl.attachShader(this.program, this.v_shader)
         gl.attachShader(this.program, this.f_shader);
+        // before linking - basically the same as layout(location = x) in other glsl
+        gl.bindAttribLocation(this.program, 0, "position");
         gl.linkProgram(this.program);
         {
             const errmsg = gl.getProgramInfoLog(this.program) as string;
@@ -35,8 +37,5 @@ export class ShaderProgram {
     }
     public use() {
         gl.useProgram(this.program);
-    }
-    public get_attribute_location(name: string) {
-        return gl.getAttribLocation(this.program, name);
     }
 }

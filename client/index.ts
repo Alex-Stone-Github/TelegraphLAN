@@ -37,21 +37,19 @@ const mesh2 = new Mesh(vertices, indices2);
 // deal with shaders
 const sprogramred = new ShaderProgram(vshadertext, fshadertext_red);
 const sprogramblue = new ShaderProgram(vshadertext, fshadertext_blue);
-// mix
-mesh1.setup(sprogramred);
-mesh2.setup(sprogramblue);
 
 // drawing once twice maybe thrice
 gl.viewport(0, 0, canvas.width, canvas.height); // TODO: Adjust for the lols
 gl.enable(gl.DEPTH_TEST); // no clue literal magic // TODO: Check for bugs
+gl.depthFunc(gl.LESS);
 gl.clearColor(0.5, 0.5, 0.5, 1.0);
 gl.clear(gl.COLOR_BUFFER_BIT);
 // 1
 sprogramred.use();
 mesh1.bind();
-gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+gl.drawElements(gl.TRIANGLES, mesh1.index_count, gl.UNSIGNED_SHORT, 0);
 // 2
-//sprogramblue.use();
-//mesh2.bind();
-//gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+sprogramblue.use();
+mesh2.bind();
+gl.drawElements(gl.TRIANGLES, mesh2.index_count, gl.UNSIGNED_SHORT, 0);
 

@@ -5,6 +5,7 @@ export class Mesh {
     private vao: WebGLVertexArrayObject;
     private vbo: WebGLBuffer;
     private ibo: WebGLBuffer;
+    public readonly index_count: number;
     constructor(vertices: Array<number>, indices: Array<number>) {
         // vao
         this.vao = gl.createVertexArray() as WebGLVertexArrayObject;
@@ -19,14 +20,15 @@ export class Mesh {
         this.ibo = gl.createBuffer() as WebGLBuffer;
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.ibo);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+        
+        // attrib locations and such - look at convention.md
+        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(0);
+        
+        //
+        this.index_count = indices.length;
     }
     public bind() {
         gl.bindVertexArray(this.vao);
-    }
-    public setup(sprogram: ShaderProgram) {
-        this.bind();
-        const position_id = sprogram.get_attribute_location("position");
-        gl.vertexAttribPointer(position_id, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(position_id);
     }
 }
