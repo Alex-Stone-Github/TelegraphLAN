@@ -1,3 +1,5 @@
 export const canvas = document.getElementById("Main") as HTMLCanvasElement;
-export const gl = canvas.getContext("webgl2") as WebGL2RenderingContext;
+export const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+export const fps = 30;
+
 
